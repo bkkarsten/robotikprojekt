@@ -10,41 +10,41 @@ class Position:
 
 @dataclass
 class Orientation:
-    _A: float = field(init=False, repr=False)
-    _B: float = field(init=False, repr=False)
-    _C: float = field(init=False, repr=False)
+    _a: float = field(init=False, repr=False)
+    _b: float = field(init=False, repr=False)
+    _c: float = field(init=False, repr=False)
 
-    def __init__(self, A: float = 0.0, B: float = 0.0, C: float = 0.0):
-        self.A = A
-        self.B = B
-        self.C = C
-
-    @property
-    def A(self) -> float:
-        return self._A
-
-    @A.setter
-    def A(self, value: float):
-        self._validate_value(value, "A")
-        self._A = value
+    def __init__(self, a: float = 0.0, b: float = 0.0, c: float = 0.0):
+        self.a = a
+        self.b = b
+        self.c = c
 
     @property
-    def B(self) -> float:
-        return self._B
+    def a(self) -> float:
+        return self._a
 
-    @B.setter
-    def B(self, value: float):
-        self._validate_value(value, "B")
-        self._B = value
+    @a.setter
+    def a(self, value: float):
+        self._validate_value(value, "a")
+        self._a = value
 
     @property
-    def C(self) -> float:
-        return self._C
+    def b(self) -> float:
+        return self._b
 
-    @C.setter
-    def C(self, value: float):
-        self._validate_value(value, "C")
-        self._C = value
+    @b.setter
+    def b(self, value: float):
+        self._validate_value(value, "b")
+        self._b = value
+
+    @property
+    def c(self) -> float:
+        return self._c
+
+    @c.setter
+    def c(self, value: float):
+        self._validate_value(value, "c")
+        self._c = value
 
     @staticmethod
     def _validate_value(value, name: str):
