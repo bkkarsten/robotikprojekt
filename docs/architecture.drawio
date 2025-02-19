@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
-    <mxGraphModel dx="1465" dy="724" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2261" dy="904" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
@@ -19,7 +19,7 @@
         <mxCell id="oRfxdIwDErLj5W8U_27U-49" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="oRfxdIwDErLj5W8U_27U-51" vertex="1">
           <mxGeometry x="730.1572052401748" y="78.58125" width="36.84279475982533" height="16.66875" as="geometry" />
         </mxCell>
-        <mxCell id="g2fHP8hg6-dv6D3-hH2d-4" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;RoboterInterface&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ notify( roboter_controller ) -&amp;gt; None&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ set_mole( Mole ) -&amp;gt; None&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ unset_mole( Mole ) -&amp;gt; None&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ set_tcp( Frame ) -&amp;gt; None&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_tcp() -&amp;gt; Frame&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_moles() -&amp;gt; List( Mole )&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="oRfxdIwDErLj5W8U_27U-51" vertex="1">
+        <mxCell id="g2fHP8hg6-dv6D3-hH2d-4" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br&gt;&lt;b&gt;RoboterInterface&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;+ set_mole( Mole ) -&amp;gt; None&lt;/span&gt;&lt;br&gt;&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ unset_mole( Mole ) -&amp;gt; None&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ set_tcp( Frame ) -&amp;gt; None&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_tcp() -&amp;gt; Frame&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_moles() -&amp;gt; List( Mole )&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" parent="oRfxdIwDErLj5W8U_27U-51" vertex="1">
           <mxGeometry x="460" y="105.54" width="256.78" height="144.46" as="geometry" />
         </mxCell>
         <mxCell id="g2fHP8hg6-dv6D3-hH2d-9" value="MoleController" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="oRfxdIwDErLj5W8U_27U-51" vertex="1">
@@ -31,7 +31,7 @@
         <mxCell id="g2fHP8hg6-dv6D3-hH2d-11" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="g2fHP8hg6-dv6D3-hH2d-9" vertex="1">
           <mxGeometry y="53.4404432132964" width="200.96069868995636" height="8.443213296398891" as="geometry" />
         </mxCell>
-        <mxCell id="g2fHP8hg6-dv6D3-hH2d-14" value="+ update() -&amp;gt; void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="g2fHP8hg6-dv6D3-hH2d-9" vertex="1">
+        <mxCell id="g2fHP8hg6-dv6D3-hH2d-14" value="+ notify() -&amp;gt; void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="g2fHP8hg6-dv6D3-hH2d-9" vertex="1">
           <mxGeometry y="61.883656509695285" width="200.96069868995636" height="27.440443213296398" as="geometry" />
         </mxCell>
         <mxCell id="g2fHP8hg6-dv6D3-hH2d-12" value="- calculate_next_mole() -&amp;gt; Mole" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="g2fHP8hg6-dv6D3-hH2d-9" vertex="1">
@@ -52,7 +52,7 @@
         <mxCell id="g2fHP8hg6-dv6D3-hH2d-2" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" parent="g2fHP8hg6-dv6D3-hH2d-0" vertex="1">
           <mxGeometry y="53.4404432132964" width="199.22077922077924" height="8.443213296398891" as="geometry" />
         </mxCell>
-        <mxCell id="g2fHP8hg6-dv6D3-hH2d-3" value="+ update() -&amp;gt; void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="g2fHP8hg6-dv6D3-hH2d-0" vertex="1">
+        <mxCell id="g2fHP8hg6-dv6D3-hH2d-3" value="+ notify() -&amp;gt; void" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="g2fHP8hg6-dv6D3-hH2d-0" vertex="1">
           <mxGeometry y="61.883656509695285" width="199.22077922077924" height="27.440443213296398" as="geometry" />
         </mxCell>
         <mxCell id="g2fHP8hg6-dv6D3-hH2d-5" value="- calculate_next_tcp() -&amp;gt; Frame" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" parent="g2fHP8hg6-dv6D3-hH2d-0" vertex="1">

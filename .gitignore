@@ -1,1 +1,4 @@
 *drawio.bkp
+.idea/
+.venv/
+*/__pycache__/
