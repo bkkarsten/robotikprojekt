@@ -1,6 +1,7 @@
 import asyncio
 from RoboterController import RoboterController
-from RoboterInterface import RoboterInterface, Communicator
+from RoboterInterface import RoboterInterface
+from MockInterface import MockInterface as Communicator
 from MoleController import MoleController
 
 
@@ -9,7 +10,7 @@ def setup() -> tuple[RoboterController, MoleController, RoboterInterface]:
     This function initializes relevant objects.
     :returns: tuple with initialized RoboterController, MoleController & RoboterInterface
     """
-    return RoboterController(), MoleController(), Communicator()
+    return RoboterController(), MoleController(), Communicator(randomised=True)
 
 
 async def main() -> None:
