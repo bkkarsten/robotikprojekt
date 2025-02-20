@@ -62,17 +62,20 @@ class Frame:
 
 @dataclass
 class Mole:
-    _id: int = field(init=False, repr=False)  # immutable field
+    _mole_id: int = field(init=False, repr=False)
     position: Position
-    isActive: bool
+    is_active: bool
 
-    def __post_init__(self):
-        if self._id < 0:
-            raise ValueError("id must be non-negative")
+    def __init__(self, mole_id: int, position: Position, isActive: bool):
+        if mole_id < 0:
+            raise ValueError("Id must be non-negative")
+        object.__setattr__(self, "_mole_id", mole_id)
+        self.position = position
+        self.is_active = isActive
 
     def __repr__(self):
-        return f"Mole(id={self.id}, position={self.position}, isActive={self.isActive})"
+        return f"Mole(id={self.mole_id}, position={self.position}, isActive={self.is_active})"
 
     @property
-    def id(self) -> int:
-        return self._id
+    def mole_id(self) -> int:
+        return self._mole_id
