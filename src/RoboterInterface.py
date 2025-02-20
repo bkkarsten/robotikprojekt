@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 import datatypes as types
+import asyncio
 
 
 class RoboterInterface(ABC):
@@ -10,25 +11,25 @@ class RoboterInterface(ABC):
     For detailed architecture documentation, see docs/architecture.
     """
     @abstractmethod
-    def set_mole(self, mole: types.Mole) -> None:
+    async def set_mole(self, mole: types.Mole) -> None:
         pass
 
     @abstractmethod
-    def unset_mole(self, mole: types.Mole) -> None:
+    async def unset_mole(self, mole: types.Mole) -> None:
         pass
 
     @abstractmethod
-    def move_tcp(self, frame: types.Frame) -> None:
+    async def move_tcp(self, frame: types.Frame) -> None:
         pass
 
     @abstractmethod
-    def get_tcp(self) -> types.Frame:
+    async def get_tcp(self) -> types.Frame:
         pass
 
     @abstractmethod
-    def get_moles(self) -> List[types.Mole]:
+    async def get_moles(self) -> List[types.Mole]:
         pass
 
     @abstractmethod
-    def notify(self) -> None:
+    async def notify(self) -> None:
         pass
