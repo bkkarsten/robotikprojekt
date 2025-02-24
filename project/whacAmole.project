@@ -4,7 +4,7 @@
    <Description>Whac A Mole</Description>
 
    <Kinematics>
-      <Machine ID="robot1" Enable="1">
+      <Machine ID="HammerRobot" Enable="1">
          <MachType></MachType>
          <Link Parent="zero" />
          <Model>kr210-r2700.robot</Model>
@@ -14,21 +14,50 @@
          <AxisPos Pos="{A1 0.00, A2 -90.00, A3 90.00, A4 0.00, A5 90.00, A6 0.00}" />
          <ToolData Value="{X -500.00, Y 0.00, Z 50.00, A 0.00, B 180.00, C 0.00}" />
          <BaseData Value="{X 0.00, Y 0.00, Z 0.00, A 0.00, B 0.00, C 0.00}" />
+         <ET_AX Value="" />
+         <ET_TA1KR Value="" />
+         <ET_TA2A1 Value="" />
+         <ET_TA3A2 Value="" />
+         <ET_TFLA3 Value="" />
+      </Machine>
+      <Machine ID="MoleRobot" Enable="1">
+         <MachType></MachType>
+         <Link Parent="zero" />
+         <Model>C:\Users\bkars\Programme\RobGL\KR210-R2700.robot</Model>
+         <IP-Address>172.31.1.147</IP-Address>
+         <Position Pos="{X 4500.00, Y 0.00, Z 0.00, A 180.00, B 0.00, C 0.00}" />
+         <RobRoot Pos="{X 0.00, Y 0.00, Z 0.00, A 0.00, B -0.00, C 0.00}" />
+         <AxisPos Pos="{A1 0.00, A2 60.00, A3 -90.00, A4 0.00, A5 -60.00, A6 0.00}" />
+         <ToolData Value="{X 0.00, Y 0.00, Z 0.00, A 0.00, B 0.00, C 0.00}" />
+         <BaseData Value="{X 0.00, Y 0.00, Z 0.00, A 0.00, B 0.00, C 0.00}" />
+         <ET_AX Value="" />
+         <ET_TA1KR Value="" />
+         <ET_TA2A1 Value="" />
+         <ET_TA3A2 Value="" />
+         <ET_TFLA3 Value="" />
       </Machine>
    </Kinematics>
-
    <Workcell>
       <NodeList />
       <Element>
-         <Info Name="HammerTool"/>
          <Type>file.stl.auto</Type>
+         <Info Name="HammerTool" />
+         <Attach ToNode="HammerRobot.flange" />
+         <Dimensions />
+         <Position Pos="{X -500.00, Y 0.00, Z 50.00, A 0.00, B -90.00, C -0.00}" />
+         <Color RGB="#1f92ff" />
+         <Display Visible="1" WireFrame="0" />
          <FileRef>../models/hammer.stl</FileRef>
+      </Element>
+      <Element>
+         <Info Name="mole.stl"/>
+         <Type>file.stl.auto</Type>
+         <FileRef>../models/mole.stl</FileRef>
          <Dimensions Size="1"/>
-         <Position Pos="{X -500.0000, Y 0.0000, Z 50.0000, A 0.0000, B -90.0000, C 0.0000}"/>
+         <Position Pos="{X -15.0000, Y 40.0000, Z 200.0000, A 0.0000, B 0.0000, C 0.0000}"/>
          <Color RGB="#1f92ff"/>
          <Display Visible="1" WireFrame="0"/>
-         <Attach ToNode="robot1.flange"/>
+         <Attach ToNode="MoleRobot.flange"/>
       </Element>
    </Workcell>
-
 </RobGLProject>
