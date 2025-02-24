@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <RobGLProject>
 
-   <Description>Student Demo</Description>
+   <Description>Whac A Mole</Description>
 
    <Kinematics>
       <Machine ID="robot1" Enable="1">
