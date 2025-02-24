@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<RobGLProject>
+
+   <Description>Student Demo</Description>
+
+   <Kinematics>
+      <Machine ID="robot1" Enable="1">
+         <MachType></MachType>
+         <Link Parent="zero" />
+         <Model>kr210-r2700.robot</Model>
+         <IP-Address>172.31.1.147</IP-Address>
+         <Position Pos="{X 0.00, Y 0.00, Z 0.00, A 0.00, B 0.00, C 0.00}" />
+         <RobRoot Pos="{X 0.00, Y 0.00, Z 0.00, A 0.00, B -0.00, C 0.00}" />
+         <AxisPos Pos="{A1 0.00, A2 -90.00, A3 90.00, A4 0.00, A5 90.00, A6 0.00}" />
+         <ToolData Value="{X 0.00, Y 0.00, Z 200.00, A 0.00, B 180.00, C 0.00}" />
+         <BaseData Value="{X 0.00, Y 0.00, Z 0.00, A 0.00, B 0.00, C 0.00}" />
+      </Machine>
+   </Kinematics>
+
+   <Workcell>
+      <NodeList />
+      <Element>
+         <Info Name="HammerTool"/>
+         <Type>file.stl.auto</Type>
+         <FileRef>../models/hammer.stl</FileRef>
+         <Dimensions Size="1"/>
+         <Position Pos="{X -500.0000, Y 0.0000, Z 50.0000, A 0.0000, B -90.0000, C 0.0000}"/>
+         <Color RGB="#1f92ff"/>
+         <Display Visible="1" WireFrame="0"/>
+         <Attach ToNode="robot1.flange"/>
+      </Element>
+   </Workcell>
+
+</RobGLProject>
