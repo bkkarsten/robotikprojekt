@@ -8,7 +8,6 @@
          <MachType></MachType>
          <Link Parent="zero" />
          <Model>kr210-r2700.robot</Model>
-         <IP-Address>172.31.1.147</IP-Address>
          <Position Pos="{X 0.00, Y 0.00, Z 0.00, A 0.00, B 0.00, C 0.00}" />
          <RobRoot Pos="{X 0.00, Y 0.00, Z 0.00, A 0.00, B -0.00, C 0.00}" />
          <AxisPos Pos="{A1 0.00, A2 -90.00, A3 90.00, A4 0.00, A5 90.00, A6 0.00}" />
@@ -24,7 +23,6 @@
          <MachType></MachType>
          <Link Parent="zero" />
          <Model>KR210-R2700.robot</Model>
-         <IP-Address>172.31.1.147</IP-Address>
          <Position Pos="{X 4500.00, Y 0.00, Z 0.00, A 180.00, B 0.00, C 0.00}" />
          <RobRoot Pos="{X 0.00, Y 0.00, Z 0.00, A 0.00, B -0.00, C 0.00}" />
          <AxisPos Pos="{A1 0.00, A2 60.00, A3 -75.00, A4 0.00, A5 -75.00, A6 0.00}" />
