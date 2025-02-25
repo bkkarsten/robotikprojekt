@@ -1,3 +1,6 @@
+import asyncio
+
+
 class MoleController:
-    def start_routine(self) -> None:
+    async def update(self) -> None:
         print("Mole controller has started the routine!")
