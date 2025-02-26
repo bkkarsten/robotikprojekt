@@ -12,7 +12,6 @@ class MockInterface(RoboterInterface):
     """
 
     def __init__(self,
-                 randomised: bool,
                  mole_controller: MoleController | None,
                  roboter_controller: RoboterController | None):
         """
@@ -20,10 +19,6 @@ class MockInterface(RoboterInterface):
         """
         self.roboter_controller = roboter_controller
         self.mole_controller = mole_controller
-        self.tcp = Frame(Position(0, 0, 0), Orientation(0, 0, 0))
-        self.randomised = randomised
-        if randomised:
-            self.moving_mole: Mole | None = None
 
     async def set_mole(self, mole: Mole) -> None:
         if mole not in self.get_moles():
