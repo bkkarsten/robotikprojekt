@@ -7,7 +7,7 @@ from MockInterface import MockInterface as Communicator
 from MoleController import MoleController
 
 
-def setup() -> tuple[RoboterController, MoleController, RoboterInterface]:
+def setup() -> Tuple[RoboterController, MoleController, RoboterInterface]:
     """
     This function initializes relevant objects.
     :returns: tuple with initialized RoboterController, MoleController & RoboterInterface
