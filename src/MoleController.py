@@ -1,7 +1,7 @@
 import asyncio
 import random
 from datatypes import Mole
-from typing import List
+from typing import List, Set
 from RoboterInterface import RoboterInterface
 
 
@@ -47,6 +47,7 @@ class MoleController:
         self._max_moles: int = max_moles
         self._roboter_interface: RoboterInterface = roboter_interface
         self._task: asyncio.Task | None = asyncio.create_task(self.main_loop())
+        self.notify_tasks: Set = set()
 
     async def main_loop(self) -> None:
         """
@@ -55,11 +56,13 @@ class MoleController:
         while True:
             random_time: float = random.uniform(self._min_waiting_time, self._max_waiting_time)
             await asyncio.sleep(random_time)
-            if len(await self._get_active_moles()) == self._max_moles:
+            if len(await self._get_active_moles()) >= self._max_moles:
                 await self._replace_active_mole()
             else:
                 await self._add_active_mole()
-            notify_task = asyncio.create_task(self._roboter_interface.notify())
+            self.notify_tasks.add(asyncio.create_task(self._roboter_interface.notify()))
+            done_tasks = {task for task in self.notify_tasks if task.done()}
+            self.notify_tasks.difference_update(done_tasks)
 
     async def mole_hit(self, mole: Mole) -> None:
         """
@@ -84,8 +87,8 @@ class MoleController:
         active_moles = await self._get_active_moles()
         non_active_moles = await self._get_non_active_moles()
 
-        new_inactive_mole = self._get_random_element(active_moles)
-        new_active_mole = self._get_random_element(non_active_moles)
+        new_inactive_mole = await self._get_random_element(active_moles)
+        new_active_mole = await self._get_random_element(non_active_moles)
 
         if new_inactive_mole:
             new_inactive_mole.is_active = False
