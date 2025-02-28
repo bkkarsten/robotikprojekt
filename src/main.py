@@ -19,7 +19,7 @@ async def main() -> None:
     roboter_interface: RoboterInterface
     roboter_controller, mole_controller, roboter_interface = setup()
 
-    await mole_controller.update()
+    await mole_controller.main_loop()
 
 
 if __name__ == "__main__":
