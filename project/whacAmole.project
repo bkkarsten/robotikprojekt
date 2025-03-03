@@ -67,5 +67,14 @@
          <Display Visible="1" WireFrame="0"/>
          <Attach ToNode="zero"/>
       </Element>
+      <Element>
+         <Info Name="Pedestal"/>
+         <Type>generic.block</Type>
+         <Dimensions X="1000.000" Y="1000.000" Z="1250.000" />
+         <Position Pos="{X -500.0000, Y -500.0000, Z 0.0000, A 0.0000, B 0.0000, C 0.0000}"/>
+         <Color RGB="#804040"/>
+         <Display Visible="1" WireFrame="0"/>
+         <Attach ToNode="zero"/>
+      </Element>
    </Workcell>
 </RobGLProject>
