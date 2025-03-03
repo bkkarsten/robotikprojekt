@@ -23,7 +23,7 @@
          <MachType></MachType>
          <Link Parent="zero" />
          <Model>KR210-R2700.robot</Model>
-         <Position Pos="{X 4500.00, Y 0.00, Z 0.00, A 180.00, B 0.00, C 0.00}" />
+         <Position Pos="{X 4400.00, Y 0.00, Z 0.00, A 180.00, B 0.00, C 0.00}" />
          <RobRoot Pos="{X 0.00, Y 0.00, Z 0.00, A 0.00, B -0.00, C 0.00}" />
          <AxisPos Pos="{A1 0.00, A2 -60.00, A3 80.00, A4 0.00, A5 -110.00, A6 0.00}" />
          <ToolData Value="{X 0.00, Y 0.00, Z 0.00, A 0.00, B 0.00, C 0.00}" />
