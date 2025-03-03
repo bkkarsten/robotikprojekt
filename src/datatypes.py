@@ -148,6 +148,11 @@ class Frame:
             self.orientation
         )
 
+    def transformed(self, transformation: 'Frame') -> 'Frame':
+        translated = self.translated(transformation.position)
+        rotated = self.rotated(transformation.orientation)
+        return Frame(translated.position, rotated.orientation)
+
 @dataclass
 class Mole:
     _mole_id: int = field(init=False, repr=False)
