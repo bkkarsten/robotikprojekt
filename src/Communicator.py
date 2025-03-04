@@ -7,37 +7,39 @@ import asyncio
 import re
 
 class Robot():
-    def __init__(self, id:str, frame:Frame):
+    def __init__(self, id:str, frame:Frame, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         self._id = id
         self._frame = frame
+        self._reader = reader
+        self._writer = writer
 
-    async def move(self, pos: Position, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+    async def move(self, pos: Position) -> None:
         """
         Moves the robot in the simulation.
 
         param pos: The position to move to in the world coordinate system (!).
         """
         pos_in_my_system = pos.in_system(self._frame)
-        writer.write(f'<MovePTP Pos="{pos_in_my_system}" ID="{self._id}"/>'.encode())
-        await writer.drain()
-        await reader.read(200)
+        self._writer.write(f'<MovePTP Pos="{pos_in_my_system}" ID="{self._id}"/>'.encode())
+        await self._writer.drain()
+        await self._reader.read(200)
 
-    async def _select(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+    async def _select(self) -> None:
         """
         Selects the robot in the simulation.
         """
-        writer.write(f'<MovePTP Pos="{{}}" ID="{self._id}"/>'.encode())
-        await writer.drain()
-        await reader.read(200)
+        self._writer.write(f'<MovePTP Pos="{{}}" ID="{self._id}"/>'.encode())
+        await self._writer.drain()
+        await self._reader.read(200)
 
-    async def get_tcp_pos(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Position:
+    async def get_tcp_pos(self) -> Position:
         """
         Gets the position of the robot's tcp in the simulation in the world coordinate system.
         """
-        await self._select(reader, writer)
-        writer.write('<ShowVar Name="$POS_ACT"/>'.encode())
-        await writer.drain()
-        data = str(await reader.read(200))
+        await self._select()
+        self._writer.write('<ShowVar Name="$POS_ACT"/>'.encode())
+        await self._writer.drain()
+        data = str(await self._reader.read(200))
         pattern = r'X ([\d\.\-]+), Y ([\d\.\-]+), Z ([\d\.\-]+)'
         match = re.search(pattern, data)
         if not match: 
@@ -50,27 +52,25 @@ class Robot():
         return pos_in_world
         
     
-    async def is_moving(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> bool:
+    async def is_moving(self) -> bool:
         """
         Returns whether the robot is currently moving.
         """
-        await self._select(reader, writer)
-        pos1 = await self.get_tcp_pos(reader, writer)
+        await self._select()
+        pos1 = await self.get_tcp_pos()
         await asyncio.sleep(0.1)
-        pos2 = await self.get_tcp_pos(reader, writer)
+        pos2 = await self.get_tcp_pos()
         return pos1 != pos2
     
     async def wait_until_idle(self,
-                             reader: asyncio.StreamReader, 
-                             writer: asyncio.StreamWriter,
                              wait_interval: float = 0.3) -> None:
         """
         Waits until the robot is not moving anymore.
         """
-        await self._select(reader, writer)
+        await self._select()
         while True:
             await asyncio.sleep(wait_interval)
-            if not await self.is_moving(reader, writer):
+            if not await self.is_moving():
                 break
 
 class Communicator(RoboterInterface):
