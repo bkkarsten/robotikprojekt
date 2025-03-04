@@ -22,13 +22,19 @@ class Robot():
         await writer.drain()
         await reader.read(200)
 
+    async def _select(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        """
+        Selects the robot in the simulation.
+        """
+        writer.write(f'<MovePTP Pos="{{}}" ID="{self._id}"/>'.encode())
+        await writer.drain()
+        await reader.read(200)
+
     async def get_tcp_pos(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Position:
         """
         Gets the position of the robot's tcp in the simulation in the world coordinate system.
-
-        !!! WARNING !!! Due to limits in the TCP interface, this will currently always get the 
-        frame of the active robot, not necessarily this one.
         """
+        await self._select(reader, writer)
         writer.write('<ShowVar Name="$POS_ACT"/>'.encode())
         await writer.drain()
         data = str(await reader.read(200))
@@ -47,11 +53,10 @@ class Robot():
     async def is_moving(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> bool:
         """
         Returns whether the robot is currently moving.
-
-        !!! WARNING !!! Due to limits in the TCP interface, this will currently always get the
-        moving status of the active robot, not necessarily this one.
         """
+        await self._select(reader, writer)
         pos1 = await self.get_tcp_pos(reader, writer)
+        await asyncio.sleep(0.1)
         pos2 = await self.get_tcp_pos(reader, writer)
         return pos1 != pos2
     
@@ -61,10 +66,8 @@ class Robot():
                              wait_interval: float = 0.3) -> None:
         """
         Waits until the robot is not moving anymore.
-
-        !!! WARNING !!! Due to limits in the TCP interface, this will currently only check for the 
-        moving status of the active robot, not necessarily this one.
         """
+        await self._select(reader, writer)
         while True:
             await asyncio.sleep(wait_interval)
             if not await self.is_moving(reader, writer):
