@@ -22,9 +22,9 @@ class Robot():
         await writer.drain()
         await reader.read(200)
 
-    async def get_tcp_frame(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Frame:
+    async def get_tcp_pos(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Position:
         """
-        Gets the frame of the robot's tcp in the simulation in the robot's coordinate system.
+        Gets the position of the robot's tcp in the simulation in the world coordinate system.
 
         !!! WARNING !!! Due to limits in the TCP interface, this will currently always get the 
         frame of the active robot, not necessarily this one.
@@ -32,32 +32,17 @@ class Robot():
         writer.write('<ShowVar Name="$POS_ACT"/>'.encode())
         await writer.drain()
         data = str(await reader.read(200))
-        pattern = r'X ([\d\.\-]+), Y ([\d\.\-]+), Z ([\d\.\-]+), A ([\d\.\-]+), B ([\d\.\-]+), C ([\d\.\-]+)'
+        pattern = r'X ([\d\.\-]+), Y ([\d\.\-]+), Z ([\d\.\-]+)'
         match = re.search(pattern, data)
-        if match:
-            values = list(map(float, match.groups()))
-            frame = Frame(Position(*values[:3]), Orientation(*values[3:]))
-            return frame
-        else:
+        if not match: 
             return None
+        values = list(map(float, match.groups()))
+        if len(values) != 3:
+            return None
+        pos = Position(*values)
+        pos_in_world = pos.transformed(self._frame)
+        return pos_in_world
         
-    async def get_tcp_pos(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Position:
-        """
-        Gets the position of the robot's tcp in the simulation in the robot's coordinate system.
-
-        !!! WARNING !!! Due to limits in the TCP interface, this will currently always get the 
-        position of the active robot, not necessarily this one.
-        """
-        return (await self.get_tcp_frame(reader, writer)).position
-    
-    async def get_tcp_rot(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Orientation:
-        """
-        Gets the orientation of the robot's tcp in the simulation in the robot's coordinate system.
-
-        !!! WARNING !!! Due to limits in the TCP interface, this will currently always get the 
-        orientation of the active robot, not necessarily this one.
-        """
-        return (await self.get_tcp_frame(reader, writer)).orientation
     
     async def is_moving(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> bool:
         """
