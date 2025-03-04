@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import numpy as np
 
 
 @dataclass
@@ -7,6 +8,50 @@ class Position:
     y: float = 0.0
     z: float = 0.0
 
+    def translate(self, mov: 'Position') -> None:
+        self.x += mov.x
+        self.y += mov.y
+        self.z += mov.z
+
+    def translated(self, mov: 'Position') -> 'Position':
+        return Position(self.x + mov.x, self.y + mov.y, self.z + mov.z)
+    
+    def rotated(self, rot: 'Orientation') -> 'Position': 
+        ca, sa = np.cos(np.radians(rot.a)), np.sin(np.radians(rot.a))
+        cb, sb = np.cos(np.radians(rot.b)), np.sin(np.radians(rot.b))
+        cc, sc = np.cos(np.radians(rot.c)), np.sin(np.radians(rot.c))
+        r11 = ca * cb
+        r12 = ca * sb * sc - sa * cc
+        r13 = ca * sb * cc + sa * sc
+        r21 = sa * cb
+        r22 = sa * sb * sc + ca * cc
+        r23 = sa * sb * cc - ca * sc
+        r31 = -sb
+        r32 = cb * sc
+        r33 = cb * cc
+        rotation_matrix = np.array([[r11, r12, r13], [r21, r22, r23], [r31, r32, r33]])
+        position = np.array([self.x, self.y, self.z])
+        rotated_position = np.dot(rotation_matrix, position)
+        x, y, z = rotated_position
+        return Position(x, y, z)
+    
+    def rotate(self, rot: 'Orientation') -> None:
+        rotated = self.rotated(rot)
+        self.x, self.y, self.z = rotated.x, rotated.y, rotated.z
+
+    def transformed(self, transformation: 'Frame') -> 'Position':
+        return self.rotated(transformation.orientation).translated(transformation.position)
+    
+    def transform(self, transformation: 'Frame') -> None:
+        transformed = self.transformed(transformation)
+        self.x, self.y, self.z = transformed.x, transformed.y, transformed.z
+
+    def in_system(self, system: 'Frame') -> 'Position':
+        transformation = system.inverse()
+        return self.translated(transformation.position).rotated(transformation.orientation)
+    
+    def __repr__(self):
+        return f"{{X {self.x}, Y {self.y}, Z {self.z}}}"
 
 @dataclass
 class Orientation:
@@ -53,12 +98,69 @@ class Orientation:
         if not (0.0 <= value < 360):
             raise ValueError(f"{name} must be in range [0, 360). Given: {value}")
 
+    def inverse(self) -> 'Orientation':
+        return Orientation((-self.a) % 360.0, 
+                           (-self.b) % 360.0, 
+                           (-self.c) % 360.0)
+
+    def invert(self) -> None:
+        self.a = (-self.a) % 360.0
+        self.b = (-self.b) % 360.0
+        self.c = (-self.c) % 360.0
+
+    def rotated(self, other: 'Orientation') -> 'Orientation':
+        return Orientation((self.a + other.a) % 360.0, 
+                           (self.b + other.b) % 360.0, 
+                           (self.c + other.c) % 360.0)
+    
+    def rotate(self, other: 'Orientation') -> None:
+        self.a = (self.a + other.a) % 360.0
+        self.b = (self.b + other.b) % 360.0
+        self.c = (self.c + other.c) % 360.0
+
+    def __repr__(self):
+        return f"{{A {self.a}, B {self.b}, C {self.c}}}"
 
 @dataclass
 class Frame:
     position: Position
     orientation: Orientation
 
+    def __repr__(self):
+        return f"{{X {self.position.x}, Y {self.position.y}, Z {self.position.z}, A {self.orientation.a}, B {self.orientation.b}, C {self.orientation.c}}}"
+
+    def inverse(self) -> 'Frame':
+        return Frame(
+            Position(-self.position.x, -self.position.y, -self.position.z),
+            Orientation(
+                (-self.orientation.a) % 360.0, 
+                (-self.orientation.b) % 360.0, 
+                (-self.orientation.c) % 360.0),
+        )
+    
+    def invert(self) -> None:
+        self.position = Position(-self.position.x, -self.position.y, -self.position.z)
+        self.orientation = Orientation(
+            (-self.orientation.a) % 360.0, 
+            (-self.orientation.b) % 360.0, 
+            (-self.orientation.c) % 360.0)
+
+    def translate(self, mov: Position) -> None:
+        self.position = Position(
+            self.position.x + mov.x,
+            self.position.y + mov.y,
+            self.position.z + mov.z
+        )
+
+    def translated(self, mov: Position) -> 'Frame':
+        return Frame(
+            Position(
+                self.position.x + mov.x,
+                self.position.y + mov.y,
+                self.position.z + mov.z
+            ),
+            self.orientation
+        )
 
 @dataclass
 class Mole:
