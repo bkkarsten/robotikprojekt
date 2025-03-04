@@ -11,17 +11,20 @@ class Robot():
         self._id = id
         self._frame = frame
 
-    async def move(self, frame: Frame, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+    async def move(self, pos: Position, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         """
         Moves the robot in the simulation.
+
+        param pos: The position to move to in the world coordinate system (!).
         """
-        writer.write(f'<MoveLIN Pos="{frame}" ID="{self._id}"/>'.encode())
+        pos_in_my_system = pos.in_system(self._frame)
+        writer.write(f'<MovePTP Pos="{pos_in_my_system}" ID="{self._id}"/>'.encode())
         await writer.drain()
         await reader.read(200)
 
-    async def get_frame(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Frame:
+    async def get_tcp_frame(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Frame:
         """
-        Gets the frame of the robot's tcp in the simulation.
+        Gets the frame of the robot's tcp in the simulation in the robot's coordinate system.
 
         !!! WARNING !!! Due to limits in the TCP interface, this will currently always get the 
         frame of the active robot, not necessarily this one.
@@ -33,27 +36,28 @@ class Robot():
         match = re.search(pattern, data)
         if match:
             values = list(map(float, match.groups()))
-            return Frame(Position(*values[:3]), Orientation(*values[3:]))
+            frame = Frame(Position(*values[:3]), Orientation(*values[3:]))
+            return frame
         else:
             return None
         
-    async def get_pos(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Position:
+    async def get_tcp_pos(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Position:
         """
-        Gets the position of the robot's tcp in the simulation.
+        Gets the position of the robot's tcp in the simulation in the robot's coordinate system.
 
         !!! WARNING !!! Due to limits in the TCP interface, this will currently always get the 
         position of the active robot, not necessarily this one.
         """
-        return (await self.get_frame(reader, writer)).position
+        return (await self.get_tcp_frame(reader, writer)).position
     
-    async def get_rot(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Orientation:
+    async def get_tcp_rot(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> Orientation:
         """
-        Gets the orientation of the robot's tcp in the simulation.
+        Gets the orientation of the robot's tcp in the simulation in the robot's coordinate system.
 
         !!! WARNING !!! Due to limits in the TCP interface, this will currently always get the 
         orientation of the active robot, not necessarily this one.
         """
-        return (await self.get_frame(reader, writer)).orientation
+        return (await self.get_tcp_frame(reader, writer)).orientation
     
     async def is_moving(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> bool:
         """
@@ -62,22 +66,20 @@ class Robot():
         !!! WARNING !!! Due to limits in the TCP interface, this will currently always get the
         moving status of the active robot, not necessarily this one.
         """
-        pos1 = await self.get_pos(reader, writer)
-        pos2 = await self.get_pos(reader, writer)
+        pos1 = await self.get_tcp_pos(reader, writer)
+        pos2 = await self.get_tcp_pos(reader, writer)
         return pos1 != pos2
     
-    async def wait_for_move_completed(self, 
-                                      frame: Frame, 
-                                      reader: asyncio.StreamReader, 
-                                      writer: asyncio.StreamWriter,
-                                      wait_interval: float = 0.3) -> None:
+    async def wait_until_idle(self,
+                             reader: asyncio.StreamReader, 
+                             writer: asyncio.StreamWriter,
+                             wait_interval: float = 0.3) -> None:
         """
-        Moves the robot and waits until it has finished moving.
+        Waits until the robot is not moving anymore.
 
-        !!! WARNING !!! Due to limits in the TCP interface, this will currently check for the 
+        !!! WARNING !!! Due to limits in the TCP interface, this will currently only check for the 
         moving status of the active robot, not necessarily this one.
         """
-        await self.move(frame, reader, writer)
         while True:
             await asyncio.sleep(wait_interval)
             if not await self.is_moving(reader, writer):
