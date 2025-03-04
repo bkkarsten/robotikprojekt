@@ -77,31 +77,52 @@ class Communicator(RoboterInterface):
     def __init__(self,
                  mole_controller: MoleController | None,
                  roboter_controller: RoboterController | None,
-                 mole_rob_frame: Frame,
                  hammer_rob_frame: Frame,
+                 mole_rob_frame: Frame,
+                 active_mole_height: float,
+                 inactive_mole_height: float,
                  addr: str = "localhost",
                  port:int = 6106):
         self._roboter_controller = roboter_controller
         self._mole_controller = mole_controller
         asyncio.run(self._connect())
+        self._hammer_robot = Robot("HammerRobot", hammer_rob_frame, self._reader, self._writer)
+        self._mole_robot = Robot("MoleRobot", mole_rob_frame)
+        self._active_mole_id = -1
 
     async def _connect(self):
         self._reader, self._writer = await asyncio.open_connection(self.addr, self.port)
 
     async def set_mole(self, mole: Mole) -> None:
-        pass
+        mole_pos = mole.position
+        await self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._active_mole_heigt))
+        await self._mole_robot.wait_until_idle()
+        self._active_mole_id = mole.mole_id
 
     async def unset_mole(self, mole: Mole) -> None:
-        pass
+        if mole.mole_id == self._active_mole_id:
+            mole_pos = mole.position
+            await self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._inactive_mole_heigt))
+            await self._mole_robot.wait_until_idle()
+            self._active_mole_id = -1
 
-    async def move_tcp(self, frame: Frame) -> None:
-        pass
+    async def move_tcp(self, pos: Position) -> None:
+        await self._hammer_robot.move(pos)
+        await self._hammer_robot.wait_until_idle()
 
-    async def get_tcp(self) -> Frame:
-        return Frame()
+    async def get_tcp(self) -> Position:
+        return await self._hammer_robot.get_tcp_pos()
 
     async def get_moles(self) -> List[Mole]:
         return await self._mole_controller.moles
 
     async def notify(self) -> None:
+        moles = self._mole_controller.moles
+        if len([mole for mole in moles if mole.is_active]) > 1:
+            raise Exception("Currently only one active mole at a time possible!")
+        for mole in moles:
+            if mole.is_active:
+                self.set_mole(mole)
+            else: 
+                self.unset_mole(mole)
         await self._roboter_controller.notify()
