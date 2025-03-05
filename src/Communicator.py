@@ -31,7 +31,7 @@ class Robot():
         pos_in_my_system = pos.in_system(self._frame)
         self._writer.write(f'<MovePTP Pos="{pos_in_my_system}" ID="{self._id}"/>'.encode())
         await self._writer.drain()
-        await self._reader.read(200)
+        await self._reader.read(300)
 
     async def _select(self) -> None:
         """
@@ -39,7 +39,7 @@ class Robot():
         """
         self._writer.write(f'<MovePTP Pos="{{}}" ID="{self._id}"/>'.encode())
         await self._writer.drain()
-        await self._reader.read(200)
+        await self._reader.read(300)
 
     async def get_tcp_pos(self) -> Position:
         """
@@ -48,7 +48,7 @@ class Robot():
         await self._select()
         self._writer.write('<ShowVar Name="$POS_ACT"/>'.encode())
         await self._writer.drain()
-        data = str(await self._reader.read(200))
+        data = str(await self._reader.read(300))
         pattern = r'X ([\d\.\-]+), Y ([\d\.\-]+), Z ([\d\.\-]+)'
         match = re.search(pattern, data)
         if not match: 
@@ -89,14 +89,14 @@ class Communicator(RoboterInterface):
                  hammer_rob_frame: Frame,
                  mole_rob_frame: Frame,
                  active_mole_height: float,
-                 inactive_mole_height: float,
-                 addr: str = "localhost",
-                 port:int = 6106):
+                 inactive_mole_height: float):
         self._roboter_controller = roboter_controller
         self._mole_controller = mole_controller
         self._hammer_robot = Robot("HammerRobot", hammer_rob_frame)
         self._mole_robot = Robot("MoleRobot", mole_rob_frame)
         self._active_mole_id = -1
+        self._active_mole_height = active_mole_height
+        self._inactive_mole_height = inactive_mole_height
 
     async def set_roboter_controller(self, controller: RoboterController) -> None:
         self._roboter_controller = controller
@@ -113,14 +113,18 @@ class Communicator(RoboterInterface):
 
     async def set_mole(self, mole: Mole) -> None:
         mole_pos = mole.position
-        await self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._active_mole_heigt))
+        await self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._inactive_mole_height))
+        await self._mole_robot.wait_until_idle()
+        await self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._active_mole_height))
         await self._mole_robot.wait_until_idle()
         self._active_mole_id = mole.mole_id
 
     async def unset_mole(self, mole: Mole) -> None:
+        print(mole.mole_id)
+        print(self._active_mole_id)
         if mole.mole_id == self._active_mole_id:
             mole_pos = mole.position
-            await self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._inactive_mole_heigt))
+            await self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._inactive_mole_height))
             await self._mole_robot.wait_until_idle()
             self._active_mole_id = -1
 
@@ -132,15 +136,16 @@ class Communicator(RoboterInterface):
         return await self._hammer_robot.get_tcp_pos()
 
     async def get_moles(self) -> List[Mole]:
-        return await self._mole_controller.moles
+        return self._mole_controller.moles
 
     async def notify(self) -> None:
         moles = self._mole_controller.moles
         if len([mole for mole in moles if mole.is_active]) > 1:
             raise Exception("Currently only one active mole at a time possible!")
         for mole in moles:
-            if mole.is_active:
-                self.set_mole(mole)
-            else: 
-                self.unset_mole(mole)
+            if not mole.is_active:
+                await self.unset_mole(mole)
+        for mole in moles:
+            if mole.is_active: 
+                await self.set_mole(mole)
         await self._roboter_controller.notify()
