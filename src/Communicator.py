@@ -90,6 +90,12 @@ class Communicator(RoboterInterface):
         self._mole_robot = Robot("MoleRobot", mole_rob_frame)
         self._active_mole_id = -1
 
+    async def set_roboter_controller(self, controller: RoboterController) -> None:
+        self._roboter_controller = controller
+
+    async def set_mole_controller(self, controller: MoleController) -> None:
+        self._mole_controller = controller
+
     async def _connect(self):
         self._reader, self._writer = await asyncio.open_connection(self.addr, self.port)
 
