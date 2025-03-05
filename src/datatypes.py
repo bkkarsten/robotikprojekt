@@ -132,33 +132,19 @@ class Frame:
     def inverse(self) -> 'Frame':
         return Frame(
             Position(-self.position.x, -self.position.y, -self.position.z),
-            Orientation(
-                (-self.orientation.a) % 360.0, 
-                (-self.orientation.b) % 360.0, 
-                (-self.orientation.c) % 360.0),
+            self.orientation.inverse()
         )
     
     def invert(self) -> None:
         self.position = Position(-self.position.x, -self.position.y, -self.position.z)
-        self.orientation = Orientation(
-            (-self.orientation.a) % 360.0, 
-            (-self.orientation.b) % 360.0, 
-            (-self.orientation.c) % 360.0)
+        self.orientation.invert()
 
     def translate(self, mov: Position) -> None:
-        self.position = Position(
-            self.position.x + mov.x,
-            self.position.y + mov.y,
-            self.position.z + mov.z
-        )
+        self.position.translate(mov)
 
     def translated(self, mov: Position) -> 'Frame':
         return Frame(
-            Position(
-                self.position.x + mov.x,
-                self.position.y + mov.y,
-                self.position.z + mov.z
-            ),
+            self.position.translated(mov),
             self.orientation
         )
 
