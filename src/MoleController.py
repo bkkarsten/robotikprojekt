@@ -47,7 +47,7 @@ class MoleController:
         self._max_moles: int = max_moles
         self._roboter_interface: RoboterInterface = roboter_interface
         self._task: asyncio.Task | None = asyncio.create_task(self.main_loop())
-        self.notify_tasks: Set = set()
+        # self.notify_tasks: Set = set()
 
     async def main_loop(self) -> None:
         """
@@ -60,9 +60,10 @@ class MoleController:
                 await self._replace_active_mole()
             else:
                 await self._add_active_mole()
-            self.notify_tasks.add(asyncio.create_task(self._roboter_interface.notify()))
-            done_tasks = {task for task in self.notify_tasks if task.done()}
-            self.notify_tasks.difference_update(done_tasks)
+            # self.notify_tasks.add(asyncio.create_task(self._roboter_interface.notify()))
+            # done_tasks = {task for task in self.notify_tasks if task.done()}
+            # self.notify_tasks.difference_update(done_tasks)
+            await self._roboter_interface.notify()
 
     async def mole_hit(self, mole: Mole) -> None:
         """
