@@ -7,10 +7,19 @@ import asyncio
 import re
 
 class Robot():
-    def __init__(self, id:str, frame:Frame, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
+    def __init__(self, id:str, 
+                 frame:Frame, 
+                 reader: asyncio.StreamReader | None = None, 
+                 writer: asyncio.StreamWriter | None = None):
         self._id = id
         self._frame = frame
         self._reader = reader
+        self._writer = writer
+
+    def set_reader(self, reader: asyncio.StreamReader) -> None:
+        self._reader = reader
+
+    def set_writer(self, writer: asyncio.StreamWriter) -> None:
         self._writer = writer
 
     async def move(self, pos: Position) -> None:
@@ -85,8 +94,7 @@ class Communicator(RoboterInterface):
                  port:int = 6106):
         self._roboter_controller = roboter_controller
         self._mole_controller = mole_controller
-        asyncio.run(self._connect())
-        self._hammer_robot = Robot("HammerRobot", hammer_rob_frame, self._reader, self._writer)
+        self._hammer_robot = Robot("HammerRobot", hammer_rob_frame)
         self._mole_robot = Robot("MoleRobot", mole_rob_frame)
         self._active_mole_id = -1
 
@@ -96,8 +104,12 @@ class Communicator(RoboterInterface):
     async def set_mole_controller(self, controller: MoleController) -> None:
         self._mole_controller = controller
 
-    async def _connect(self):
-        self._reader, self._writer = await asyncio.open_connection(self.addr, self.port)
+    async def connect(self, addr: str = "localhost", port:int = 6106):
+        self._reader, self._writer = await asyncio.open_connection(addr, port)
+        self._hammer_robot.set_reader(self._reader)
+        self._hammer_robot.set_writer(self._writer)
+        self._mole_robot.set_reader(self._reader)
+        self._mole_robot.set_writer(self._writer)
 
     async def set_mole(self, mole: Mole) -> None:
         mole_pos = mole.position
