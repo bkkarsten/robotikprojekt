@@ -17,7 +17,7 @@ class MockInterface(RoboterInterface):
         """
         param randomised: Whether to move one mole to a random position every time get_moles is called
         """
-        self._tcp = Frame(Position(0, 0, 0), Orientation(0, 0, 0))
+        self._tcp = Position(0, 0, 0)
         self._roboter_controller = roboter_controller
         self._mole_controller = mole_controller
 
@@ -33,11 +33,11 @@ class MockInterface(RoboterInterface):
         mole.is_active = False
         print(f"Unset mole {mole}")
 
-    async def move_tcp(self, frame: Frame) -> None:
-        self._tcp = frame
+    async def move_tcp(self, pos: Position) -> None:
+        self._tcp = pos
         print(f"TCP moved to {self._tcp}")
 
-    async def get_tcp(self) -> Frame:
+    async def get_tcp(self) -> Position:
         return self._tcp
 
     async def get_moles(self) -> List[Mole]:

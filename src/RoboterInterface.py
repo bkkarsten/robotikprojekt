@@ -19,11 +19,11 @@ class RoboterInterface(ABC):
         pass
 
     @abstractmethod
-    async def move_tcp(self, frame: types.Frame) -> None:
+    async def move_tcp(self, pos: types.Position) -> None:
         pass
 
     @abstractmethod
-    async def get_tcp(self) -> types.Frame:
+    async def get_tcp(self) -> types.Position:
         pass
 
     @abstractmethod
