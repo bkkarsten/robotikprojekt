@@ -19,11 +19,11 @@ class RoboterInterface(ABC):
         pass
 
     @abstractmethod
-    async def move_tcp(self, frame: types.Frame) -> None:
+    async def move_tcp(self, pos: types.Position) -> None:
         pass
 
     @abstractmethod
-    async def get_tcp(self) -> types.Frame:
+    async def get_tcp(self) -> types.Position:
         pass
 
     @abstractmethod
@@ -34,25 +34,3 @@ class RoboterInterface(ABC):
     async def notify(self) -> None:
         pass
 
-
-class Communicator(RoboterInterface):
-    """
-    Mock interface implementation until the Communicator is implemented.
-    """
-    def set_mole(self, mole: types.Mole) -> None:
-        pass
-
-    def unset_mole(self, mole: types.Mole) -> None:
-        pass
-
-    def move_tcp(self, frame: types.Frame) -> None:
-        pass
-
-    def get_tcp(self) -> types.Frame:
-        return types.Frame()
-
-    def get_moles(self) -> List[types.Mole]:
-        return list()
-
-    def notify(self) -> None:
-        pass

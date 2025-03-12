@@ -23,14 +23,14 @@ class RoboterController:
         _target = await self._calculate_target()
         await self._roboter_interface.move_tcp(_target)
 
-    async def _calculate_target(self) -> Frame:
+    async def _calculate_target(self) -> Position:
         """
         Calculates new target frame based on the current tcp and active moles.
         :returns: new target frame
         """
         active_moles: List[Mole] = await self._get_active_moles()
         target_mole: Mole = await self._get_closest_mole(active_moles)
-        return Frame(position=target_mole.position, orientation=Orientation(0, 0, 0))
+        return target_mole.position
 
     async def _get_active_moles(self) -> List[Mole]:
         """
@@ -46,5 +46,5 @@ class RoboterController:
         :param moles: list of active moles
         :return:
         """
-        tcp: Frame = await self._roboter_interface.get_tcp()
-        return min(moles, key=lambda mole: geometry.calculate_distance(tcp.position, mole.position))
+        tcp: Position = await self._roboter_interface.get_tcp()
+        return min(moles, key=lambda mole: geometry.calculate_distance(tcp, mole.position))
