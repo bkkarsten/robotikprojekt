@@ -12,6 +12,7 @@ inactive_heigth = 1500.0
 min_wait = 2.0
 max_wait = 5.0
 
+
 def setup() -> tuple[RoboterController, MoleController, RoboterInterface]:
     """
     This function initializes relevant objects.
