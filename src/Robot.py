@@ -7,6 +7,11 @@ class Robot():
                  frame:Frame, 
                  reader: asyncio.StreamReader | None = None, 
                  writer: asyncio.StreamWriter | None = None):
+        """
+        Robot constructor.
+        
+        param frame: The robots position and rotation relative to WORLD
+        """
         self._id = id
         self._frame = frame
         self._reader = reader
@@ -57,7 +62,7 @@ class Robot():
         return pos_in_world
         
     
-    async def is_moving(self) -> bool:
+    async def is_moving(self, epsilon=0.0001) -> bool:
         """
         Returns whether the robot is currently moving.
         """
@@ -65,7 +70,17 @@ class Robot():
         pos1 = await self.get_tcp_pos()
         await asyncio.sleep(0.1)
         pos2 = await self.get_tcp_pos()
+        return abs(pos1.x - pos2.x > epsilon) or abs(pos1.y - pos2.y > epsilon) or abs(pos1.z - pos2.z > epsilon)
+    
+    async def _is_moving(self) -> bool:
+        """
+        Returns whether the robot is currently moving, assuming the robot is already selected.
+        """
+        pos1 = await self.get_tcp_pos()
+        await asyncio.sleep(0.1)
+        pos2 = await self.get_tcp_pos()
         return pos1 != pos2
+    
     
     async def wait_until_idle(self,
                              wait_interval: float = 0.3) -> None:
@@ -75,5 +90,5 @@ class Robot():
         await self._select()
         while True:
             await asyncio.sleep(wait_interval)
-            if not await self.is_moving():
+            if not await self._is_moving():
                 break

@@ -44,8 +44,6 @@ class Communicator(RoboterInterface):
         self._active_mole_id = mole.mole_id
 
     async def unset_mole(self, mole: Mole) -> None:
-        print(mole.mole_id)
-        print(self._active_mole_id)
         if mole.mole_id == self._active_mole_id:
             mole_pos = mole.position
             await self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._inactive_mole_height))
