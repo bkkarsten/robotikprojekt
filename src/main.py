@@ -25,7 +25,7 @@ def setup() -> tuple[RoboterController, MoleController, RoboterInterface]:
                              active_height,
                              inactive_heigth,
                              host='localhost')
-    interface.connect()
+    # interface.connect()
     rob_ctrl = RoboterController(interface)
     interface.set_roboter_controller(rob_ctrl)
     moles = []

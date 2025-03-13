@@ -1,5 +1,5 @@
 from math import sqrt
-from src.datatypes import Position
+from datatypes import Position
 
 
 def calculate_distance(position1: Position, position2: Position) -> float:

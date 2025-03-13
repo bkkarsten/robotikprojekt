@@ -20,12 +20,12 @@ class Communicator(RoboterInterface):
                  ):
         self._host = host
         self._port = port
-        self._reader = None
-        self._writer = None
         self._roboter_controller = roboter_controller
         self._mole_controller = mole_controller
-        self._hammer_robot = Robot("HammerRobot", hammer_rob_frame, host=self._host, port=self._port)
-        self._mole_robot = Robot("MoleRobot", mole_rob_frame, host=self._host, port=self._port)
+        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.connect((self._host, self._port))
+        self._hammer_robot = Robot("HammerRobot", hammer_rob_frame, socket=self._socket)
+        self._mole_robot = Robot("MoleRobot", mole_rob_frame, socket=self._socket)
         self._active_mole_id = -1
         self._active_mole_height = active_mole_height
         self._inactive_mole_height = inactive_mole_height
@@ -35,18 +35,6 @@ class Communicator(RoboterInterface):
 
     def set_mole_controller(self, controller: MoleController) -> None:
         self._mole_controller = controller
-
-    def connect(self):
-        self._reader, self._writer = self._connect_tcp()
-        self._hammer_robot.set_reader(self._reader)
-        self._hammer_robot.set_writer(self._writer)
-        self._mole_robot.set_reader(self._reader)
-        self._mole_robot.set_writer(self._writer)
-
-    def _connect_tcp(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((self._host, self._port))
-        return s.makefile('rb'), s.makefile('wb')
 
     def set_mole(self, mole: Mole) -> None:
         mole_pos = mole.position

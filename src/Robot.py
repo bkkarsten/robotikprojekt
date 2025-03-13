@@ -5,7 +5,7 @@ import re
 
 
 class Robot:
-    def __init__(self, id: str, frame: "Frame", host: str, port: int):
+    def __init__(self, id: str, frame: "Frame", socket: socket.socket):
         """
         Robot constructor.
 
@@ -15,36 +15,14 @@ class Robot:
         """
         self._id = id
         self._frame = frame
-        self._host = host
-        self._port = port
-        self._socket = None
-        self._reader = None
-        self._writer = None
-
-    def connect(self):
-        """Establish a TCP connection to the robot."""
-        self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.connect((self._host, self._port))
-        self._reader, self._writer = self._create_socket_streams()
+        self._socket = socket
 
     def disconnect(self):
         """Close the TCP connection."""
         if self._socket:
             self._socket.close()
             self._socket = None
-
-    def _create_socket_streams(self):
-        """Create and return reader and writer objects based on the socket connection."""
-        return self._socket.makefile('rb'), self._socket.makefile('wb')
-
-    def set_reader(self, reader):
-        """Set a custom reader for the socket."""
-        self._reader = reader
-
-    def set_writer(self, writer):
-        """Set a custom writer for the socket."""
-        self._writer = writer
-
+            
     def _send(self, message: str) -> None:
         """Send a message over the TCP connection."""
         if not self._socket:
