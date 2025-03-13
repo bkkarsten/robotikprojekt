@@ -1,7 +1,7 @@
 from RoboterInterface import RoboterInterface
 from RoboterController import RoboterController
 from MoleController import MoleController
-from datatypes import Mole, Frame, Position, Orientation
+from datatypes import Mole, Position
 from typing import List
 
 
@@ -21,30 +21,30 @@ class MockInterface(RoboterInterface):
         self._roboter_controller = roboter_controller
         self._mole_controller = mole_controller
 
-    async def set_mole(self, mole: Mole) -> None:
+    def set_mole(self, mole: Mole) -> None:
         if mole not in self.get_moles():
             raise ValueError(f"Mole {mole} not found in moles list")
         mole.is_active = True
         print(f"Set mole {mole}")
 
-    async def unset_mole(self, mole: Mole) -> None:
+    def unset_mole(self, mole: Mole) -> None:
         if mole not in self.get_moles():
             raise ValueError(f"Mole {mole} not found in moles list")
         mole.is_active = False
         print(f"Unset mole {mole}")
 
-    async def move_tcp(self, pos: Position) -> None:
+    def move_tcp(self, pos: Position) -> None:
         self._tcp = pos
         print(f"TCP moved to {self._tcp}")
 
-    async def get_tcp(self) -> Position:
+    def get_tcp(self) -> Position:
         return self._tcp
 
-    async def get_moles(self) -> List[Mole]:
+    def get_moles(self) -> List[Mole]:
         return self._mole_controller.moles
 
-    async def notify(self) -> None:
-        await self._roboter_controller.notify()
+    def notify(self) -> None:
+        self._roboter_controller.notify()
         print("Notified")
 
     def set_roboter_controller(self, roboter_controller: RoboterController) -> None:

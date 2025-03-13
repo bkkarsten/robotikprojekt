@@ -1,94 +1,109 @@
-import asyncio
-from datatypes import Frame, Position, Orientation
+import socket
+import time
+from datatypes import Frame, Position
 import re
 
-class Robot():
-    def __init__(self, id:str, 
-                 frame:Frame, 
-                 reader: asyncio.StreamReader | None = None, 
-                 writer: asyncio.StreamWriter | None = None):
+
+class Robot:
+    def __init__(self, id: str, frame: "Frame", socket: socket.socket):
         """
         Robot constructor.
-        
-        param frame: The robots position and rotation relative to WORLD
+
+        :param frame: The robot's position and rotation relative to WORLD.
+        :param host: The IP address of the robot controller.
+        :param port: The TCP port number.
         """
         self._id = id
         self._frame = frame
-        self._reader = reader
-        self._writer = writer
+        self._socket = socket
 
-    def set_reader(self, reader: asyncio.StreamReader) -> None:
-        self._reader = reader
+    def disconnect(self):
+        """Close the TCP connection."""
+        if self._socket:
+            self._socket.close()
+            self._socket = None
+            
+    def _send(self, message: str) -> None:
+        """Send a message over the TCP connection."""
+        if not self._socket:
+            raise ConnectionError("Not connected to the robot.")
+        self._socket.sendall(message.encode())
 
-    def set_writer(self, writer: asyncio.StreamWriter) -> None:
-        self._writer = writer
+    def _receive(self, buffer_size: int = 300) -> str:
+        """Receive data from the TCP connection."""
+        if not self._socket:
+            raise ConnectionError("Not connected to the robot.")
+        return self._socket.recv(buffer_size).decode()
 
-    async def move(self, pos: Position) -> None:
+    def move(self, pos: Position) -> None:
         """
         Moves the robot in the simulation.
 
         param pos: The position to move to in the world coordinate system (!).
         """
         pos_in_my_system = pos.in_system(self._frame)
-        self._writer.write(f'<MovePTP Pos="{pos_in_my_system}" ID="{self._id}"/>'.encode())
-        await self._writer.drain()
-        await self._reader.read(300)
+        command = f'<MovePTP Pos="{pos_in_my_system}" ID="{self._id}"/>'
+        self._send(command)
+        self._receive()
 
-    async def _select(self) -> None:
+    def _select(self) -> None:
         """
         Selects the robot in the simulation.
         """
-        self._writer.write(f'<MovePTP Pos="{{}}" ID="{self._id}"/>'.encode())
-        await self._writer.drain()
-        await self._reader.read(300)
+        command = f'<MovePTP Pos="{{}}" ID="{self._id}"/>'
+        self._send(command)
+        self._receive()
 
-    async def get_tcp_pos(self) -> Position:
+    def get_tcp_pos(self) -> Position:
         """
         Gets the position of the robot's tcp in the simulation in the world coordinate system.
         """
-        await self._select()
-        self._writer.write('<ShowVar Name="$POS_ACT"/>'.encode())
-        await self._writer.drain()
-        data = str(await self._reader.read(300))
+        self._select()
+        self._send('<ShowVar Name="$POS_ACT"/>')
+        data = self._receive()
+
         pattern = r'X ([\d\.\-]+), Y ([\d\.\-]+), Z ([\d\.\-]+)'
         match = re.search(pattern, data)
-        if not match: 
+        if not match:
             return None
+
         values = list(map(float, match.groups()))
         if len(values) != 3:
             return None
+
         pos = Position(*values)
-        pos_in_world = pos.transformed(self._frame)
-        return pos_in_world
+        return pos.transformed(self._frame)
         
-    
-    async def is_moving(self, epsilon=0.0001) -> bool:
+    def is_moving(self, epsilon=0.0001) -> bool:
         """
         Returns whether the robot is currently moving.
         """
-        await self._select()
-        pos1 = await self.get_tcp_pos()
-        await asyncio.sleep(0.1)
-        pos2 = await self.get_tcp_pos()
-        return abs(pos1.x - pos2.x > epsilon) or abs(pos1.y - pos2.y > epsilon) or abs(pos1.z - pos2.z > epsilon)
-    
-    async def _is_moving(self) -> bool:
+        self._select()
+        pos1 = self.get_tcp_pos()
+        time.sleep(0.1)
+        pos2 = self.get_tcp_pos()
+
+        return (
+                abs(pos1.x - pos2.x) > epsilon or
+                abs(pos1.y - pos2.y) > epsilon or
+                abs(pos1.z - pos2.z) > epsilon
+        )
+
+    def _is_moving(self) -> bool:
         """
-        Returns whether the robot is currently moving, assuming the robot is already selected.
+        Returns whether the robot is currently moving, assuming it is already selected.
         """
-        pos1 = await self.get_tcp_pos()
-        await asyncio.sleep(0.1)
-        pos2 = await self.get_tcp_pos()
+        pos1 = self.get_tcp_pos()
+        time.sleep(0.1)
+        pos2 = self.get_tcp_pos()
         return pos1 != pos2
-    
-    
-    async def wait_until_idle(self,
-                             wait_interval: float = 0.3) -> None:
+
+    def wait_until_idle(self, wait_interval: float = 0.3) -> None:
         """
         Waits until the robot is not moving anymore.
         """
-        await self._select()
+        self._select()
         while True:
-            await asyncio.sleep(wait_interval)
-            if not await self._is_moving():
+            time.sleep(wait_interval)
+            if not self._is_moving():
                 break

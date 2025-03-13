@@ -15,36 +15,36 @@ class RoboterController:
         self._target: Frame = Frame(Position(0, 0, 0), Orientation(0, 0, 0))
         self._roboter_interface = roboter_interface
 
-    async def notify(self) -> None:
+    def notify(self) -> None:
         """
         If this method is called, a new target frame is calculated based on the current tcp and active moles.
         The new tcp position is then sent to the robot.
         """
-        _target = await self._calculate_target()
-        await self._roboter_interface.move_tcp(_target)
+        _target = self._calculate_target()
+        self._roboter_interface.move_tcp(_target)
 
-    async def _calculate_target(self) -> Position:
+    def _calculate_target(self) -> Position:
         """
         Calculates new target frame based on the current tcp and active moles.
         :returns: new target frame
         """
-        active_moles: List[Mole] = await self._get_active_moles()
-        target_mole: Mole = await self._get_closest_mole(active_moles)
+        active_moles: List[Mole] = self._get_active_moles()
+        target_mole: Mole = self._get_closest_mole(active_moles)
         return target_mole.position
 
-    async def _get_active_moles(self) -> List[Mole]:
+    def _get_active_moles(self) -> List[Mole]:
         """
         Checks which moles are currently active.
         :returns: active moles as a list
         """
-        moles: List[Mole] = await self._roboter_interface.get_moles()
+        moles: List[Mole] = self._roboter_interface.get_moles()
         return [mole for mole in moles if mole.is_active]
 
-    async def _get_closest_mole(self, moles: List[Mole]) -> Mole:
+    def _get_closest_mole(self, moles: List[Mole]) -> Mole:
         """
         Calculates the closest mole to current tcp.
         :param moles: list of active moles
         :return:
         """
-        tcp: Position = await self._roboter_interface.get_tcp()
+        tcp: Position = self._roboter_interface.get_tcp()
         return min(moles, key=lambda mole: geometry.calculate_distance(tcp, mole.position))
