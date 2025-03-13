@@ -18,19 +18,21 @@ def setup() -> tuple[RoboterController, MoleController, RoboterInterface]:
     This function initializes relevant objects.
     :returns: tuple with initialized RoboterController, MoleController & RoboterInterface
     """
-    interface = Communicator(None, 
-                             None, 
-                             Frame(Position(0,0,1250), Orientation(0,0,0)),
+    interface = Communicator(None,
+                             None,
+                             Frame(Position(0, 0, 1250), Orientation(0, 0, 0)),
                              Frame(Position(4400, 0, 0), Orientation(180, 0, 0)),
                              active_height,
-                             inactive_heigth)
+                             inactive_heigth,
+                             host='localhost')
     interface.connect()
     rob_ctrl = RoboterController(interface)
     interface.set_roboter_controller(rob_ctrl)
     moles = []
     for x in range(3):
         for y in range(3):
-            moles.append(Mole(3 * x + y, Position(hole_0_x - x * hole_dist, hole_0_y + y * hole_dist, active_height), False))
+            moles.append(
+                Mole(3 * x + y, Position(hole_0_x - x * hole_dist, hole_0_y + y * hole_dist, active_height), False))
     mole_ctrl = MoleController(moles, min_wait, max_wait, 1, interface)
     interface.set_mole_controller(mole_ctrl)
     return rob_ctrl, mole_ctrl, interface

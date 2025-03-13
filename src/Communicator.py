@@ -36,18 +36,17 @@ class Communicator(RoboterInterface):
     def set_mole_controller(self, controller: MoleController) -> None:
         self._mole_controller = controller
 
-    def connect(self, addr: str = "localhost", port: int = 6106):
-        self._reader, self._writer = self._connect_tcp(addr=addr, port=port)
+    def connect(self):
+        self._reader, self._writer = self._connect_tcp()
         self._hammer_robot.set_reader(self._reader)
         self._hammer_robot.set_writer(self._writer)
         self._mole_robot.set_reader(self._reader)
         self._mole_robot.set_writer(self._writer)
 
-    def _connect_tcp(self, addr: str, port: int):
-        # Traditional blocking socket connection
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((addr, port))
-        return sock.makefile('rb'), sock.makefile('wb')
+    def _connect_tcp(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((self._host, self._port))
+        return s.makefile('rb'), s.makefile('wb')
 
     def set_mole(self, mole: Mole) -> None:
         mole_pos = mole.position
