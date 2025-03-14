@@ -5,17 +5,16 @@ import re
 
 
 class Robot:
-    def __init__(self, id: str, frame: "Frame", socket: socket.socket):
+    def __init__(self, id: str, frame: "Frame", sock: socket.socket):
         """
         Robot constructor.
 
         :param frame: The robot's position and rotation relative to WORLD.
-        :param host: The IP address of the robot controller.
-        :param port: The TCP port number.
+        :param sock: The IP address of the robot controller.
         """
         self._id = id
         self._frame = frame
-        self._socket = socket
+        self._socket = sock
 
     def disconnect(self):
         """Close the TCP connection."""

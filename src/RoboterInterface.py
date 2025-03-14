@@ -18,7 +18,7 @@ class RoboterInterface(ABC):
         pass
 
     @abstractmethod
-    def move_tcp(self, pos: types.Position) -> None:
+    def move_tcp(self, pos: types.Position, return_home: bool = False) -> None:
         pass
 
     @abstractmethod
