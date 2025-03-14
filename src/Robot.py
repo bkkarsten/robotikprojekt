@@ -88,21 +88,12 @@ class Robot:
                 abs(pos1.z - pos2.z) > epsilon
         )
 
-    def _is_moving(self) -> bool:
-        """
-        Returns whether the robot is currently moving, assuming it is already selected.
-        """
-        pos1 = self.get_tcp_pos()
-        time.sleep(0.1)
-        pos2 = self.get_tcp_pos()
-        return pos1 != pos2
-
-    def wait_until_idle(self, wait_interval: float = 0.3) -> None:
+    def wait_until_idle(self, wait_interval: float = 0.1) -> None:
         """
         Waits until the robot is not moving anymore.
         """
         self._select()
         while True:
             time.sleep(wait_interval)
-            if not self._is_moving():
+            if not self.is_moving():
                 break

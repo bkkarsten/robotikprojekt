@@ -51,15 +51,13 @@ class Communicator(RoboterInterface):
             mole_pos = mole.position
             self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._inactive_mole_height))
             self._mole_robot.wait_until_idle()
+            self.move_tcp(self._hammer_robot_home)
+            self._hammer_robot.wait_until_idle()
             self._active_mole_id = -1
 
     def move_tcp(self, pos: Position, return_home: bool = False) -> None:
         self._hammer_robot.move(pos)
         self._hammer_robot.wait_until_idle()
-
-        if return_home:
-            self._hammer_robot.move(self._hammer_robot_home)
-            self._hammer_robot.wait_until_idle()
 
     def get_tcp(self) -> Position:
         return self._hammer_robot.get_tcp_pos()

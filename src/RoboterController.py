@@ -22,8 +22,8 @@ class RoboterController:
         The new tcp position is then sent to the robot.
         """
         self._target = self._calculate_target()
-        self._target.z += MOLE_HEIGHT
-        self._roboter_interface.move_tcp(pos=self._target, return_home=True)
+        self._roboter_interface.move_tcp(pos=Position(self._target.x, self._target.y, self._target.z + MOLE_HEIGHT),
+                                         return_home=True)
 
     def _calculate_target(self) -> Position:
         """
