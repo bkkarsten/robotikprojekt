@@ -5,17 +5,16 @@ import re
 
 
 class Robot:
-    def __init__(self, id: str, frame: "Frame", socket: socket.socket):
+    def __init__(self, id: str, frame: "Frame", sock: socket.socket):
         """
         Robot constructor.
 
         :param frame: The robot's position and rotation relative to WORLD.
-        :param host: The IP address of the robot controller.
-        :param port: The TCP port number.
+        :param sock: The IP address of the robot controller.
         """
         self._id = id
         self._frame = frame
-        self._socket = socket
+        self._socket = sock
 
     def disconnect(self):
         """Close the TCP connection."""
@@ -89,21 +88,12 @@ class Robot:
                 abs(pos1.z - pos2.z) > epsilon
         )
 
-    def _is_moving(self) -> bool:
-        """
-        Returns whether the robot is currently moving, assuming it is already selected.
-        """
-        pos1 = self.get_tcp_pos()
-        time.sleep(0.1)
-        pos2 = self.get_tcp_pos()
-        return pos1 != pos2
-
-    def wait_until_idle(self, wait_interval: float = 0.3) -> None:
+    def wait_until_idle(self, wait_interval: float = 0.1) -> None:
         """
         Waits until the robot is not moving anymore.
         """
         self._select()
         while True:
             time.sleep(wait_interval)
-            if not self._is_moving():
+            if not self.is_moving():
                 break

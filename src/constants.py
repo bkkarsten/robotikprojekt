@@ -1,0 +1,9 @@
+HOLE_DIST: float = 285.0
+HOLE_0_X: float = 2690.0
+HOLE_0_Y: float = -285.0
+ACTIVE_HEIGHT: float = 2000.0
+INACTIVE_HEIGHT: float = 1500.0
+MOLE_HEIGHT: float = 600.0
+HAMMER_HOME_HEIGHT: float = ACTIVE_HEIGHT + 900.0
+MIN_WAIT: float = 2.0
+MAX_WAIT: float = 5.0

@@ -5,6 +5,7 @@ from datatypes import Frame, Position, Orientation, Mole
 from typing import List
 import socket
 from Robot import Robot
+from constants import *
 
 
 class Communicator(RoboterInterface):
@@ -24,8 +25,9 @@ class Communicator(RoboterInterface):
         self._mole_controller = mole_controller
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._socket.connect((self._host, self._port))
-        self._hammer_robot = Robot("HammerRobot", hammer_rob_frame, socket=self._socket)
-        self._mole_robot = Robot("MoleRobot", mole_rob_frame, socket=self._socket)
+        self._hammer_robot = Robot("HammerRobot", hammer_rob_frame, sock=self._socket)
+        self._hammer_robot_home: Position = Position(HOLE_0_X - HOLE_DIST, HOLE_0_Y + HOLE_DIST, HAMMER_HOME_HEIGHT)
+        self._mole_robot = Robot("MoleRobot", mole_rob_frame, sock=self._socket)
         self._active_mole_id = -1
         self._active_mole_height = active_mole_height
         self._inactive_mole_height = inactive_mole_height
@@ -49,9 +51,11 @@ class Communicator(RoboterInterface):
             mole_pos = mole.position
             self._mole_robot.move(Position(mole_pos.x, mole_pos.y, self._inactive_mole_height))
             self._mole_robot.wait_until_idle()
+            self.move_tcp(self._hammer_robot_home)
+            self._hammer_robot.wait_until_idle()
             self._active_mole_id = -1
 
-    def move_tcp(self, pos: Position) -> None:
+    def move_tcp(self, pos: Position, return_home: bool = False) -> None:
         self._hammer_robot.move(pos)
         self._hammer_robot.wait_until_idle()
 

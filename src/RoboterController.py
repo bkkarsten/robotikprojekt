@@ -1,6 +1,7 @@
 from typing import List
-from datatypes import Frame, Position, Orientation, Mole
 import geometry
+from constants import *
+from datatypes import Frame, Position, Orientation, Mole
 from RoboterInterface import RoboterInterface
 
 
@@ -20,8 +21,9 @@ class RoboterController:
         If this method is called, a new target frame is calculated based on the current tcp and active moles.
         The new tcp position is then sent to the robot.
         """
-        _target = self._calculate_target()
-        self._roboter_interface.move_tcp(_target)
+        self._target = self._calculate_target()
+        self._roboter_interface.move_tcp(pos=Position(self._target.x, self._target.y, self._target.z + MOLE_HEIGHT),
+                                         return_home=True)
 
     def _calculate_target(self) -> Position:
         """
